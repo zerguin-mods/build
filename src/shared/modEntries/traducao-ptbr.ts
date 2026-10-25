@@ -10,21 +10,21 @@ const mod: ModDef = {
   // Off until the player turns it on, as every new mod in the build ships.
   defaultOn: false,
   blurb:
-    'A IA do jogo passa a escrever em português brasileiro: cenas, DMs, posts, memórias e personagens novas. A interface do jogo continua em inglês.',
+    'Tudo o que o jogo escreve passa ao português brasileiro: a prosa da IA — cenas, DMs, posts, memórias, personagens — e a própria interface, pelo catálogo que o mod traz.',
   offNote:
-    'Nada é apagado nem reescrito: o que já saiu em português fica como está, e a IA volta a escrever em inglês.',
+    'Nada é apagado nem reescrito: o que já saiu em português fica como está, e o jogo volta ao inglês.',
   options: [
     {
       id: PT_BR_OPTION,
       label: 'Português (Brasil)',
-      hint: 'Toda a prosa nova — cenas, DMs, posts, memórias — sai em português brasileiro natural. Nomes, chaves e tags de aparência ficam em inglês, como o jogo espera.',
+      hint: 'A prosa nova da IA e a interface do jogo saem em português brasileiro natural. Nomes, chaves e tags de aparência ficam em inglês, como o jogo espera.',
       default: true,
       group: IDIOMA_GROUP
     },
     {
       id: EN_OPTION,
       label: 'English',
-      hint: 'A IA escreve em inglês, como o jogo faz sem o mod.',
+      hint: 'Tudo volta ao inglês — a prosa da IA e a interface — como o jogo é sem o mod.',
       default: false,
       group: IDIOMA_GROUP
     }
@@ -33,7 +33,7 @@ const mod: ModDef = {
     {
       id: IDIOMA_GROUP,
       label: 'Idioma',
-      hint: 'A língua em que a IA escreve o conteúdo novo.'
+      hint: 'A língua em que o jogo se escreve: a prosa da IA e a interface.'
     }
   ]
 }
