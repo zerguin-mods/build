@@ -167,9 +167,11 @@ export function buildApi(): VenusUniversityApi {
       set: (bags) => result('save the grab bags', () => writeGrabBags(bags))
     },
     lang: {
-      // The browser build hosts no packs: it is written in English, and a language named
-      // reads as one.
-      read: (_code) => Promise.resolve({ ok: true, data: null })
+      // The browser build hosts no packs: it is written in English, a language named reads as
+      // one, remembering one goes nowhere, and the boot's synchronous read answers nothing.
+      read: (_code) => Promise.resolve({ ok: true, data: null }),
+      use: (_code) => Promise.resolve({ ok: true, data: undefined }),
+      bootSync: () => null
     },
     mods: {
       get: () => result('read the mod switches', readModSwitches),

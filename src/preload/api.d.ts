@@ -106,6 +106,10 @@ export interface VenusUniversityApi {
   lang: {
     /** The translation pack for a language, or null where none is installed. */
     read: (code: string) => Promise<Result<Record<string, string> | null>>
+    /** Remembers the language the next boot reads its pack from. */
+    use: (code: string) => Promise<Result<void>>
+    /** The boot's pack, synchronously: asked before any screen's module evaluates. */
+    bootSync: () => Record<string, string> | null
   }
   mods: {
     /** Which community mods are switched on, and their options (`shared/mods.ts`). */

@@ -21,7 +21,9 @@ const api: VenusUniversityApi = {
     set: (bags) => ipcRenderer.invoke('grabBags:set', bags)
   },
   lang: {
-    read: (code) => ipcRenderer.invoke('lang:read', code)
+    read: (code) => ipcRenderer.invoke('lang:read', code),
+    use: (code) => ipcRenderer.invoke('lang:use', code),
+    bootSync: () => ipcRenderer.sendSync('lang:bootSync')
   },
   mods: {
     get: () => ipcRenderer.invoke('mods:get'),

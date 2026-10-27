@@ -15,7 +15,7 @@ vi.mock('electron', () => ({
   app: { isPackaged: false, getAppPath: () => root, getPath: () => root }
 }))
 
-const { readLangPack } = await import('../src/main/services/langService')
+const { readBootPack, readLangPack, writeActiveLang } = await import('../src/main/services/langService')
 
 /** Writes a pack to one of the two roots, as a player or a build would. */
 async function seed(where: 'data' | 'assets', code: string, body: unknown): Promise<void> {
@@ -67,5 +67,41 @@ describe('readLangPack', () => {
     await expect(readLangPack('pt-BR')).rejects.toMatchObject({ code: 'LANG_PACK_MALFORMED' })
     await seed('data', 'pt-BR', '{not json')
     await expect(readLangPack('pt-BR')).rejects.toMatchObject({ code: 'LANG_PACK_MALFORMED' })
+  })
+})
+
+describe('the boot pack', () => {
+  it('answers the pack behind the language a boot finds named', async () => {
+    await writeActiveLang('pt-BR')
+    await seed('assets', 'pt-BR', { Settings: 'Configurações' })
+    expect(readBootPack()).toEqual({ Settings: 'Configurações' })
+  })
+
+  it('lets the pack a player put there win for the boot the same way', async () => {
+    await writeActiveLang('pt-BR')
+    await seed('assets', 'pt-BR', { Settings: 'the shipped line' })
+    await seed('data', 'pt-BR', { Settings: 'Configurações' })
+    expect(readBootPack()).toEqual({ Settings: 'Configurações' })
+  })
+
+  it('answers null where no language is named, or a named one has no pack', async () => {
+    expect(readBootPack()).toBeNull()
+    await writeActiveLang('pt-BR')
+    expect(readBootPack()).toBeNull()
+  })
+
+  it('starts in English over a boot file naming what it should not, rather than dying', async () => {
+    const active = join(root, 'data', 'lang')
+    await mkdir(active, { recursive: true })
+    await writeFile(join(active, 'active'), '../saves\n')
+    expect(readBootPack()).toBeNull()
+    await writeFile(join(active, 'active'), 'nonsense here\n')
+    expect(readBootPack()).toBeNull()
+  })
+
+  it('refuses to remember a code a file name must never be', async () => {
+    await expect(writeActiveLang('../saves')).rejects.toMatchObject({
+      code: 'LANG_PACK_CODE_INVALID'
+    })
   })
 })

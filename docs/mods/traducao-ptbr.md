@@ -51,6 +51,14 @@ shown raw; a few code-shaped labels (key names, element names) the transform wra
 translation must not answer; and the date spliced into the authored opening's first line,
 which is formatted English — everything else of that line translates around it.
 
+The module-level constants — the views' label tables, the welcome lines, the stranger
+posts — cannot wait for a pack an asynchronous read brings: they evaluate `t()` once, at
+import. The boot answers this: `main.tsx` makes one synchronous call before any screen's
+module is imported, against the one-word language `lang:use` writes under
+`/data/lang/active`, so every constant evaluates in the language the last session chose. A
+language change mid-session redresses the screens at once and is remembered for the next
+boot; the constants take the new language when the app next launches.
+
 ## What stays English
 
 The mod translates what the build hands over; the rest keeps writing in English until hooks

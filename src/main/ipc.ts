@@ -174,7 +174,7 @@ import {
 import { generateRoomImage, writeRoomUpload } from './services/roomService'
 import { applySettingsPatch, getRendererSettings, getSettings } from './services/settingsService'
 import { getGrabBags, setGrabBags } from './services/grabBagService'
-import { readLangPack } from './services/langService'
+import { readLangPack, readBootPack, writeActiveLang } from './services/langService'
 import { getModSwitches, setModSwitches } from './services/modsService'
 import { deleteReplay, listReplayIds, readReplay } from './services/replayService'
 import { deleteScene, listScenes, readScene, writeScene } from './services/sceneService'
@@ -313,6 +313,17 @@ export function registerIpcHandlers(): void {
   handle('grabBags:set', (_event, bags: GrabBags) => setGrabBags(bags))
   // The pack a language reads through, or null where none is installed.
   handle('lang:read', (_event, code: string) => readLangPack(code))
+  // Remembers the language the next boot reads its pack from; the renderer writes it
+  // whenever a choice moves.
+  handle('lang:use', (_event, code: string) => writeActiveLang(code))
+  // The boot's one synchronous call: the renderer makes it before any screen's module
+  // evaluates — the label tables and the authored content's constants are module-level, and
+  // what `t()` reads at import time is what they keep — so the pack is handed over whole
+  // before it is asked for, and a read that fails answers English rather than a boot that
+  // dies. The only `sendSync` in the app, and it stays that way.
+  ipcMain.on('lang:bootSync', (event) => {
+    event.returnValue = readBootPack()
+  })
   handle('mods:get', () => getModSwitches())
   handle('mods:set', (_event, switches: ModSwitches) => setModSwitches(switches))
   // The caller has already saved; main writes nothing on its way out.

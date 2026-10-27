@@ -29,12 +29,15 @@ function language(): GameLanguage {
 /** The pack a language draws the app in; `en`, the game's own writing, carries none. */
 const PACK_OF: Record<GameLanguage, string> = { 'pt-br': 'pt-BR', en: 'en' }
 
-/** The app's own language follows the mod's switches: the pack read in, the app remounted onto it. */
+/** The app's own language follows the mod's switches: remembered for the next boot's
+ * synchronous read, the pack read in, the app remounted onto it. A change mid-session
+ * redresses the screens at once; the module-level constants take the new language at the
+ * next launch. */
 function applyUiLanguage(): void {
   const switches = useModsStore.getState().switches
-  void useLangStore
-    .getState()
-    .switchTo(modOn(switches, TRADUCAO_PTBR) ? PACK_OF[language()] : 'en')
+  const code = modOn(switches, TRADUCAO_PTBR) ? PACK_OF[language()] : 'en'
+  void window.api.lang.use(code)
+  void useLangStore.getState().switchTo(code)
 }
 
 // The switches as they land at boot, and every time they move after: the choice is applied,

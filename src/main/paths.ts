@@ -240,6 +240,15 @@ export function getShippedLangPackPath(code: string): string {
   return join(getAssetsPath(), 'lang', `${code}.json`)
 }
 
+/**
+ * `/data/lang/active` — the one-word file naming the language a boot reads its pack from,
+ * remembered by `lang:use` whenever a choice moves. Absent, the boot is the game's own
+ * English; a hand-edited word the pattern refuses answers the same.
+ */
+export function getActiveLangPath(): string {
+  return join(getDataPath(), 'lang', 'active')
+}
+
 /** `/data/app.log` — every console line of both processes. */
 export function getAppLogPath(): string {
   return join(getDataPath(), 'app.log')

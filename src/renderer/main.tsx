@@ -3,12 +3,19 @@ import './consoleLog'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { MotionConfig } from 'motion/react'
+import { setDictionary } from '@shared/i18n/t'
 // The design system's own files load before any screen's, which arrive with `App`.
 import './vu_styles/index.css'
-import App from './App'
 import { beginCrossing } from './stores/crossingStore'
 import { useAudioStore } from './stores/audioStore'
 import { useGameStore } from './stores/gameStore'
+
+// The translation pack behind the language the last session named, read synchronously
+// before any screen's module evaluates: the label tables and the authored content's
+// constants are module-level, and what `t()` reads at import time is what they keep. `App`
+// itself arrives by a dynamic import below for the same reason — everything its graph
+// evaluates, evaluates with the language already in.
+setDictionary(window.api.lang.bootSync() ?? {})
 
 /** Every control that is typed into rather than clicked or dragged. */
 const FIELD_SELECTOR = [
@@ -139,11 +146,13 @@ window.api.llm.onTokensGenerated((generated) => useGameStore.getState().recordTo
 // location is known yet; `boot()` in `App.tsx` lowers it once settings are read.
 beginCrossing(undefined, { covered: true, wait: true })
 
-createRoot(document.getElementById('root') as HTMLElement).render(
-  <StrictMode>
-    {/* Movement is dropped for a player who asked their OS for less of it; fades stay. */}
-    <MotionConfig reducedMotion="user">
-      <App />
-    </MotionConfig>
-  </StrictMode>
-)
+void import('./App').then(({ default: App }) => {
+  createRoot(document.getElementById('root') as HTMLElement).render(
+    <StrictMode>
+      {/* Movement is dropped for a player who asked their OS for less of it; fades stay. */}
+      <MotionConfig reducedMotion="user">
+        <App />
+      </MotionConfig>
+    </StrictMode>
+  )
+})
